@@ -19,19 +19,19 @@ public:
 	{
 		{
 			Sphere sphere;
-			sphere.Position = { 0.0f, -4.0f, 0.0f };
-			sphere.Radius = 0.5f;
-			sphere.Albedo = glm::vec3 { 0.0f };
+			sphere.Position = { 0.0f, 1.0f, 0.0f };
+			sphere.Radius = 1.0f;
+			sphere.Mat.Albedo = glm::vec3{ 1.0f, 0.0f, 1.0f };
 			m_Scene.Spheres.push_back(sphere);
 		}
-
 		{
 			Sphere sphere;
-			sphere.Position = { 1.0f, -400.0f, -5.0f };
-			sphere.Radius = 395.0f;
-			sphere.Albedo = glm::vec3{ 0.1f };
+			sphere.Position = { 0.0f, -101.0f, 0.0f };
+			sphere.Radius = 100.0f;
+			sphere.Mat.Albedo = glm::vec3{ 1.0f, 1.0f, 1.0f };
 			m_Scene.Spheres.push_back(sphere);
 		}
+		
 	}
 
 	virtual void OnUpdate(float ts) override
@@ -43,10 +43,15 @@ public:
 	{
 		ImGui::Begin("Settings");
 		ImGui::Text("Last render: %.3fms", m_LastRenderTime);
-		if (ImGui::Button("Render"))
-		{
-			Render();
+		if (!m_Realtime) {
+			if (ImGui::Button("Render"))
+			{
+				Render();
+			}
 		}
+		ImGui::Checkbox("Realtime", &m_Realtime);
+		ImGui::ColorEdit3("Clear Color", glm::value_ptr(m_Scene.ClearColor));
+		
 		ImGui::End();
 
 		ImGui::Begin("Scene");
@@ -57,7 +62,9 @@ public:
 			Sphere& sphere = m_Scene.Spheres[i];
 			ImGui::DragFloat3("Position", glm::value_ptr(sphere.Position), 0.1f);
 			ImGui::DragFloat("Radius", &sphere.Radius, 0.1f);
-			ImGui::ColorEdit3("Albedo", glm::value_ptr(sphere.Albedo));
+			ImGui::ColorEdit3("Albedo", glm::value_ptr(sphere.Mat.Albedo));
+			ImGui::DragFloat("Rougness", &sphere.Mat.Roughness, 0.1f, 0.0f, 1.0f);
+			ImGui::DragFloat("Metallic", &sphere.Mat.Metallic, 0.1f, 0.0f, 1.0f);
 
 			ImGui::Separator();
 
@@ -79,7 +86,7 @@ public:
 		ImGui::End();
 		ImGui::PopStyleVar();
 
-		Render();
+		if (m_Realtime) Render();
 	}
 
 	void Render()
@@ -97,6 +104,8 @@ private:
 	Camera m_Camera;
 	Scene m_Scene;
 	uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+
+	bool m_Realtime = true;
 
 	float m_LastRenderTime = 0.0f;
 };

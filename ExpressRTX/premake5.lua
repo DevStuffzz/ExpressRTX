@@ -1,4 +1,4 @@
-project "RTX"
+project "ExpressRTX"
    kind "ConsoleApp"
    language "C++"
    cppdialect "C++17"

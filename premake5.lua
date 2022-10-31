@@ -1,10 +1,10 @@
 -- premake5.lua
-workspace "RTX"
+workspace "ExpressRTX"
    architecture "x64"
    configurations { "Debug", "Release", "Dist" }
-   startproject "RTX"
+   startproject "ExpressRTX"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Walnut/WalnutExternal.lua"
 
-include "RTX"
+include "ExpressRTX"
