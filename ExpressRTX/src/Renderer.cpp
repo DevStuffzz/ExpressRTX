@@ -1,4 +1,4 @@
-#include "Renderer.h"
+﻿#include "Renderer.h"
 
 #include "Walnut/Random.h"
 
@@ -34,6 +34,8 @@ void Renderer::OnResize(uint32_t width, uint32_t height)
 
 	delete[] m_ImageData;
 	m_ImageData = new uint32_t[width * height];
+	delete[] m_AccumulationData;
+	m_AccumulationData = new glm::vec4[width * height];
 }
 
 void Renderer::Render(const Scene& scene, const Camera& camera)
@@ -41,17 +43,30 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
 	m_ActiveScene = &scene;
 	m_ActiveCamera = &camera;
 
+	if (m_FrameIndex == 1)
+		memset(m_AccumulationData, 0, m_FinalImage->GetWidth() * m_FinalImage->GetHeight() * sizeof(glm::vec4));
+
 	for (uint32_t y = 0; y < m_FinalImage->GetHeight(); y++)
 	{
 		for (uint32_t x = 0; x < m_FinalImage->GetWidth(); x++)
 		{
 			glm::vec4 color = PerPixel(x, y);
-			color = glm::clamp(color, glm::vec4(0.0f), glm::vec4(1.0f));
-			m_ImageData[x + y * m_FinalImage->GetWidth()] = Utils::ConvertToRGBA(color);
+			m_AccumulationData[x + y * m_FinalImage->GetWidth()] += color;
+
+			glm::vec4 accumulatedData = m_AccumulationData[x + y * m_FinalImage->GetWidth()];
+			accumulatedData /= (float)m_FrameIndex;
+
+			accumulatedData = glm::clamp(accumulatedData, glm::vec4(0.0f), glm::vec4(1.0f));
+			m_ImageData[x + y * m_FinalImage->GetWidth()] = Utils::ConvertToRGBA(accumulatedData);
 		}
 	}
 
 	m_FinalImage->SetData(m_ImageData);
+
+	if (m_Settings.Accumulate)
+		m_FrameIndex++;
+	else
+		m_FrameIndex = 1;
 }
 
 glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
@@ -64,7 +79,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 	float multiplier = 1.0f;
 
 	int bounces = 4;
-	
+
 	for (int i = 0; i < bounces; i++)
 	{
 		Renderer::HitPayload payload = TraceRay(ray);
@@ -78,28 +93,29 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 		glm::vec3 lightDir = glm::normalize(glm::vec3(-1, -1, -1));
 		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
 
-	
 
-		
 		const Sphere& sphere = m_ActiveScene->Spheres[payload.ObjectIndex];
-		glm::vec3 sphereColor = sphere.Mat.Albedo;
-	
-		Ray shadowRay = { payload.WorldPosition, payload.WorldNormal - lightDir};
+		const Material& mat = m_ActiveScene->Materials[sphere.MaterialIndex];
+		glm::vec3 sphereColor = mat.Albedo;
+
+
+		Ray shadowRay = { payload.WorldPosition, payload.WorldNormal - lightDir };
 		Renderer::HitPayload shadow = TraceRay(shadowRay);
 		if (shadow.HitDistance > 0.0f) {
 			sphereColor *= glm::clamp(shadow.HitDistance - m_ActiveScene->Spheres[shadow.ObjectIndex].Radius, 0.0f, 1.0f);
 		}
 
-		
+
+
 		sphereColor *= lightIntensity;
 		color += sphereColor * multiplier;
 
 		multiplier *= 0.5f;
 
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-		ray.Direction = glm::reflect(ray.Direction, payload.WorldNormal + sphere.Mat.Roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
+		ray.Direction = glm::reflect(ray.Direction, payload.WorldNormal + mat.Roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
 	}
-		
+
 
 	return glm::vec4(color, 1.0f);
 }

@@ -1,7 +1,5 @@
 #include "Camera.h"
 
-
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -14,10 +12,10 @@ Camera::Camera(float verticalFOV, float nearClip, float farClip)
 	: m_VerticalFOV(verticalFOV), m_NearClip(nearClip), m_FarClip(farClip)
 {
 	m_ForwardDirection = glm::vec3(0, 0, -1);
-	m_Position = glm::vec3(0, 0, 5);
+	m_Position = glm::vec3(0, 0, 6);
 }
 
-void Camera::OnUpdate(float ts)
+bool Camera::OnUpdate(float ts)
 {
 	glm::vec2 mousePos = Input::GetMousePosition();
 	glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.002f;
@@ -26,7 +24,7 @@ void Camera::OnUpdate(float ts)
 	if (!Input::IsMouseButtonDown(MouseButton::Right))
 	{
 		Input::SetCursorMode(CursorMode::Normal);
-		return;
+		return false;
 	}
 
 	Input::SetCursorMode(CursorMode::Locked);
@@ -88,6 +86,8 @@ void Camera::OnUpdate(float ts)
 		RecalculateView();
 		RecalculateRayDirections();
 	}
+
+	return moved;
 }
 
 void Camera::OnResize(uint32_t width, uint32_t height)

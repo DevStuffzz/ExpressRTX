@@ -9,8 +9,15 @@
 #include <memory>
 #include <glm/glm.hpp>
 
+
+#define Screen uint32_t*
+
 class Renderer
 {
+public:
+	struct Settings {
+		bool Accumulate = true;
+	};
 public:
 	Renderer() = default;
 
@@ -18,6 +25,13 @@ public:
 	void Render(const Scene& scene, const Camera& camera);
 
 	std::shared_ptr<Walnut::Image> GetFinalImage() const { return m_FinalImage; }
+
+	Settings& GetSettings() { return m_Settings; }
+
+	void ResetFrameIndex() { m_FrameIndex = 1; }
+public:
+	int Bounces = 2;
+
 private:
 	struct HitPayload
 	{
@@ -28,16 +42,22 @@ private:
 		int ObjectIndex;
 	};
 
+
 	glm::vec4 PerPixel(uint32_t x, uint32_t y); // RayGen
 
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDistance, int objectIndex);
 	HitPayload Miss(const Ray& ray);
 private:
+	Settings m_Settings;
+
 	std::shared_ptr<Walnut::Image> m_FinalImage;
 
 	const Scene* m_ActiveScene = nullptr;
 	const Camera* m_ActiveCamera = nullptr;
 
-	uint32_t* m_ImageData = nullptr;
+	Screen m_ImageData = nullptr;
+	glm::vec4* m_AccumulationData = nullptr;
+	uint32_t m_FrameIndex = 1;
+
 };
