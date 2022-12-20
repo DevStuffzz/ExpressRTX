@@ -30,7 +30,7 @@ Once you've cloned, run the setup.bat in the scripts folder for which Visual Stu
 
 
 ![](Marketing/Screenshots/Editor.png)
-
+![](Marketing/Screenshots/ShadowsDemo.PNG)
 
 ## Roadmap
 * Ability To Render Triangles (This will make it so we can render models)
@@ -40,7 +40,7 @@ Once you've cloned, run the setup.bat in the scripts folder for which Visual Stu
 * Point, Spot, and Directional Lights
 * GPU Accellerated Rendering
 
-![](Marketing/Screenshots/ShadowsDemo.png)
+
 
 
 ### Disclaimer
