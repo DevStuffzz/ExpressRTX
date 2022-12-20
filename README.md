@@ -1,28 +1,37 @@
-# Ray Tracing!
+# ExpressRTX
 
-This is a simple Ray Tracer built using C++ and Vulkan.
+ExpressRTX is a high-fidelity graphics program built using C++ and Vulkan.
 
-![](Marketing/Screenshots/Editor.png)
-![](Marketing/Screenshots/Demo_Shadows_Highlights_Emmision.png)
+
+
+![](Marketing/Logo.png)
+
+
 
 
 ## Getting Started
-Once you've cloned, run the setup.bat in the scripts folder
+Once you've cloned, run the setup.bat in the scripts folder for which Visual Studio version that you would like to use
 
 # Requirements 
  - Vulkan SDK
-  * You can get it <a href="https://vulkan.lunarg.com/sdk/home#windows">here</a>
+  * You can install the SDK <a href="https://vulkan.lunarg.com/sdk/home#windows">here</a>
   
 ## Technologies
 * Vulkan
-* Visual C++
-* Visual Studio (2022 and 2017 supported)
+* Visual C++ Build Tools
+* Visual Studio (2022, 2019, and 2017 supported)
+* Premake
 
 ## Features
 * Real Time, Multithreaded Path Tracer on the CPU.
 * Sphere Rendering.
 * Light and Dark theme
 * Customizable Material System
+
+
+![](Marketing/Screenshots/Editor.png)
+![](Marketing/Screenshots/ShadowsDemo.png)
+
 
 ## Roadmap
 * Ability To Render Triangles (This will make it so we can render models)
@@ -34,4 +43,4 @@ Once you've cloned, run the setup.bat in the scripts folder
 
 ### Disclaimer
 This Project was build on top of <a href="https://hazelengine.com/">Hazel</a> using the <a href="https://github.com/TheCherno/Walnut">Walnut</a> framework. 
-We are also folling along The Chernos <a href="https://github.com/TheCherno/RayTracing">tutorial</a>, but are also adding our own features.
+We are also following along The Chernos <a href="https://github.com/TheCherno/RayTracing">tutorial</a>, but are also adding our own features.
