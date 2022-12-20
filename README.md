@@ -2,7 +2,7 @@
 
 This is a simple Ray Tracer built using C++ and Vulkan.
 
-
+![](Marketing/Screenshots/Editor.png)
 
 
 ## Getting Started

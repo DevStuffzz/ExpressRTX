@@ -9,14 +9,14 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-
-#define Screen uint32_t*
-
 class Renderer
 {
 public:
-	struct Settings {
-		bool Accumulate = true;
+	struct Settings
+	{
+		bool Accumulate = true; // For realtime viewing
+		int Bounces = 4; // Number of child rays
+		int Samples = 32; // For Baked Rendering
 	};
 public:
 	Renderer() = default;
@@ -26,12 +26,8 @@ public:
 
 	std::shared_ptr<Walnut::Image> GetFinalImage() const { return m_FinalImage; }
 
-	Settings& GetSettings() { return m_Settings; }
-
 	void ResetFrameIndex() { m_FrameIndex = 1; }
-public:
-	int Bounces = 2;
-
+	Settings& GetSettings() { return m_Settings; }
 private:
 	struct HitPayload
 	{
@@ -42,22 +38,22 @@ private:
 		int ObjectIndex;
 	};
 
-
 	glm::vec4 PerPixel(uint32_t x, uint32_t y); // RayGen
 
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDistance, int objectIndex);
 	HitPayload Miss(const Ray& ray);
 private:
+	std::shared_ptr<Walnut::Image> m_FinalImage;
 	Settings m_Settings;
 
-	std::shared_ptr<Walnut::Image> m_FinalImage;
+	std::vector<uint32_t> m_ImageHorizontalIter, m_ImageVerticalIter;
 
 	const Scene* m_ActiveScene = nullptr;
 	const Camera* m_ActiveCamera = nullptr;
 
-	Screen m_ImageData = nullptr;
+	uint32_t* m_ImageData = nullptr;
 	glm::vec4* m_AccumulationData = nullptr;
-	uint32_t m_FrameIndex = 1;
 
+	uint32_t m_FrameIndex = 1;
 };

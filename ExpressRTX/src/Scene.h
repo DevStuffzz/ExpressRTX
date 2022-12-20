@@ -3,8 +3,7 @@
 #include <vector>
 
 struct Light {
-	glm::vec3 Position{ 0.0f };
-	float Radius = 1.0f;
+	glm::vec3 Direction{ 0.0f };
 	glm::vec3 Color = glm::vec3(1.0f);
 };
 
@@ -15,6 +14,8 @@ struct Material {
 	float Roughness = 1.0f;
 	float Metallic = 0.0f;
 	float Specular = 0.0f;
+
+	glm::vec3 Emission;
 };
 
 struct Sphere
@@ -30,6 +31,5 @@ struct Scene
 	std::vector<Sphere> Spheres;
 	std::vector<Material> Materials;
 	std::vector<Light> Lights;
-	float Attenuation = 0.333f;
 
 };

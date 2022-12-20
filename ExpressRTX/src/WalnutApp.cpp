@@ -21,12 +21,15 @@ public:
 		SetDarkTheme();
 
 		Material& pinkSphere = m_Scene.Materials.emplace_back();
-		pinkSphere.Albedo = { 1.0f, 0.0f, 1.0f };
+		pinkSphere.Albedo = { 1.0f, 1.0f, 1.0f };
 		pinkSphere.Roughness = 0.1f;
 
 		Material& ground = m_Scene.Materials.emplace_back();
-		ground.Albedo = { 1.0f, 0.0f, 1.0f };
+		ground.Albedo = { 0.2f, 0.8f, 0.2f };
 		ground.Roughness = 0.5f;
+
+		Material& Bulb = m_Scene.Materials.emplace_back();
+		Bulb.Emission = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		// SPHERES
 		{
@@ -36,22 +39,16 @@ public:
 			sphere.MaterialIndex = 0;
 			m_Scene.Spheres.push_back(sphere);
 		}
-		// SPHERES
-		{
-			Sphere sphere;
-			sphere.Position = { 0.0f, -101.0f, 0.0f };
-			sphere.Radius = 100.0f;
-			sphere.MaterialIndex = 1;
-			m_Scene.Spheres.push_back(sphere);
-		}
+		
 		
 		// LIGHTS
 		{
 			Light light;
-			light.Position = glm::vec3{ -1.0f };
+			light.Direction = glm::vec3{ -1.0f };
 			m_Scene.Lights.push_back(light);
 		}
 
+		
 	}
 
 	virtual void OnUpdate(float ts) override
@@ -65,27 +62,30 @@ public:
 	{
 		ImGui::Begin("Settings");
 		ImGui::Text("Last render: %.3fms", m_LastRenderTime);
-			if (ImGui::Button("Render"))
-			{
-				Render();
-			}
+		if (ImGui::Button("Render"))
+		{
+			m_Realtime = false;
+			Render();
+		}
 		
-			ImGui::Checkbox("Accumulate", &m_Renderer.GetSettings().Accumulate);
+		ImGui::Checkbox("Accumulate", &m_Renderer.GetSettings().Accumulate);
 
-			if (ImGui::Button("Reset"))
-			{
-				m_Renderer.ResetFrameIndex();
-			}
+		if (ImGui::Button("Reset"))
+		{
+			m_Renderer.ResetFrameIndex();
+		}
 
 
 		
 
 		ImGui::Checkbox("Realtime", &m_Realtime);
-		ImGui::DragInt("Bounces", &m_Renderer.Bounces);
+		ImGui::DragInt("Bounces", &m_Renderer.GetSettings().Bounces);
+		
 
 		ImGui::End();
 
 		ImGui::Begin("Scene");
+		
 		for (size_t i = 0; i < m_Scene.Spheres.size(); i++)
 		{
 			ImGui::PushID(i);
@@ -108,10 +108,14 @@ public:
 
 			Material& mat = m_Scene.Materials[i];
 		
+			ImGui::Text("Lit Material");
 			ImGui::ColorEdit3("Albedo", glm::value_ptr(mat.Albedo));
 			ImGui::DragFloat("Rougness", &mat.Roughness, 0.1f, 0.0f, 1.0f);
-			ImGui::DragFloat("Metallic", &mat.Metallic, 0.1f, 0.0f, 1.0f);
-			ImGui::DragFloat("Specular", &mat.Specular, 0.1f, 0.0f, 3.0f);
+			ImGui::DragFloat("Metallic", &mat.Metallic, 0.1f, 0.0f, 3.0f);
+			ImGui::DragFloat("Specular", &mat.Specular, 0.1f, 0.0f, 100);
+
+			ImGui::ColorEdit3("Emmision", glm::value_ptr(mat.Emission));
+
 
 			ImGui::Separator();
 
@@ -126,8 +130,7 @@ public:
 			Light& light = m_Scene.Lights[i];
 
 			ImGui::ColorEdit3("Light Color", glm::value_ptr(light.Color));
-			ImGui::DragFloat3("Light Position", glm::value_ptr(light.Position));
-			ImGui::DragFloat("Light Radius", &light.Radius, 0.1f);
+			ImGui::DragFloat3("Light Direction", glm::value_ptr(light.Direction));
 
 
 			ImGui::Separator();
@@ -155,6 +158,8 @@ public:
 		if (m_Realtime) {
 			Render();
 		}
+
+		
 	}
 
 	void Render()
@@ -163,10 +168,19 @@ public:
 
 		m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
 		m_Camera.OnResize(m_ViewportWidth, m_ViewportHeight);
-		m_Renderer.Render(m_Scene, m_Camera);
+		if (!m_Realtime) {
+			m_Renderer.ResetFrameIndex();
+			for (int i = 0; i <= m_Renderer.GetSettings().Samples; i++) {
+				m_Renderer.Render(m_Scene, m_Camera);
+			}
+		}
+		else {
+			m_Renderer.Render(m_Scene, m_Camera);
+		}
 
 		m_LastRenderTime = timer.ElapsedMillis();
 		std::cout << "Render Time: " << m_LastRenderTime << "ms" << std::endl;
+
 	}
 
 	static void SetDarkTheme() {
