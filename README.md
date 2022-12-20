@@ -4,7 +4,7 @@ ExpressRTX is a high-fidelity graphics program built using C++ and Vulkan.
 
 
 
-![](Marketing/logo.png)
+![](Marketing/logo-whitebg.png)
 
 
 
