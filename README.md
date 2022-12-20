@@ -30,7 +30,6 @@ Once you've cloned, run the setup.bat in the scripts folder for which Visual Stu
 
 
 ![](Marketing/Screenshots/Editor.png)
-![](Marketing/Screenshots/ShadowsDemo.png)
 
 
 ## Roadmap
@@ -40,6 +39,9 @@ Once you've cloned, run the setup.bat in the scripts folder for which Visual Stu
 * Animation / Physics systems
 * Point, Spot, and Directional Lights
 * GPU Accellerated Rendering
+
+![](Marketing/Screenshots/ShadowsDemo.png)
+
 
 ### Disclaimer
 This Project was build on top of <a href="https://hazelengine.com/">Hazel</a> using the <a href="https://github.com/TheCherno/Walnut">Walnut</a> framework. 
