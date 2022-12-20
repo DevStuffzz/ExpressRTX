@@ -44,3 +44,7 @@ Once you've cloned, run the setup.bat in the scripts folder for which Visual Stu
 ### Disclaimer
 This Project was build on top of <a href="https://hazelengine.com/">Hazel</a> using the <a href="https://github.com/TheCherno/Walnut">Walnut</a> framework. 
 We are also following along The Chernos <a href="https://github.com/TheCherno/RayTracing">tutorial</a>, but are also adding our own features.
+
+
+### Legal
+In installing this software you agree to the terms and conditions defined in <a href="LICENSE.txt">LICENSE.txt</a>
