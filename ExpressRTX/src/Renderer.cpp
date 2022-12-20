@@ -116,7 +116,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 		Renderer::HitPayload payload = TraceRay(ray);
 		if (payload.HitDistance < 0.0f)
 		{
-			glm::vec3 skyColor = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 skyColor = glm::vec3(0.3f, 0.5f, 0.7f);
 			color += skyColor * multiplier;
 			break;
 		}
@@ -129,7 +129,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
 		glm::vec3 lightDir = -glm::normalize(glm::vec3(-1));
 
-
+				
 
 		diffuse = glm::vec3(1.0f) * glm::max(glm::dot(payload.WorldNormal, lightDir), 0.0f); // == cos(angle)
 
@@ -141,7 +141,17 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
 		glm::vec3 sphereColor = material.Albedo;
 		sphereColor *= diffuse +specular;
+			
+
+		Ray shadowRay = { payload.WorldPosition, payload.WorldNormal + lightDir };
+		Renderer::HitPayload shadow = TraceRay(shadowRay);
+		if (shadow.HitDistance > 0.0f) {
+			sphereColor *= glm::clamp(shadow.HitDistance - m_ActiveScene->Spheres[shadow.ObjectIndex].Radius, 0.0f, 1.0f);
+		}
+
 		color += sphereColor * multiplier;
+
+
 
 		multiplier *= 0.5f;
 

@@ -39,7 +39,22 @@ public:
 			sphere.MaterialIndex = 0;
 			m_Scene.Spheres.push_back(sphere);
 		}
-		
+		// SPHERES
+		{
+			Sphere sphere;
+			sphere.Position = { 1.0f, 0.0f, 0.0f };
+			sphere.Radius = 0.75f;
+			sphere.MaterialIndex = 2;
+			m_Scene.Spheres.push_back(sphere);
+		}
+		// SPHERES
+		{
+			Sphere sphere;
+			sphere.Position = { 0.0f, -101.0f, 0.0f };
+			sphere.Radius = 100.0f;
+			sphere.MaterialIndex = 1;
+			m_Scene.Spheres.push_back(sphere);
+		}
 		
 		// LIGHTS
 		{
